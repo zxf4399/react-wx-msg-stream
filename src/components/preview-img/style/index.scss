@@ -1,0 +1,25 @@
+.preview {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  img {
+    max-width: 900px;
+    max-height: 480px;
+  }
+
+  &-close {
+    position: absolute;
+    top: -28px;
+    right: -28px;
+    display: inline-block;
+    width: 55px;
+    height: 55px;
+    vertical-align: middle;
+    cursor: pointer;
+    background: url("https://i.imgur.com/vHwAIJc.png") no-repeat;
+    background-position: -422px -165px;
+    background-size: 487px 462px;
+  }
+}

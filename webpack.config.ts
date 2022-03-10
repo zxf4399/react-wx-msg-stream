@@ -6,16 +6,18 @@ import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import ESLintPlugin from "eslint-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 const isDev = process.env.NODE_ENV !== "production";
 
 const config: webpack.Configuration = {
   mode: isDev ? "development" : "production",
   entry: path.join(__dirname, "src", "index.tsx"),
+  devtool: isDev ? "eval-source-map" : "source-map",
   module: {
     rules: [
       {
-        test: /\.tsx$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -25,6 +27,24 @@ const config: webpack.Configuration = {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
+      {
+        test: /\.scss$/,
+        use: [
+          isDev ? "style-loader" : MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              modules: {
+                exportLocalsConvention: "camelCaseOnly",
+                localIdentName: "[path][name]__[local]--[hash:base64:5]",
+                auto: (resourcePath: string) =>
+                  resourcePath.endsWith(".module.scss"),
+              },
+            },
+          },
+          "sass-loader",
+        ],
+      },
     ],
   },
   output: {
@@ -33,7 +53,7 @@ const config: webpack.Configuration = {
     filename: "[name].[contenthash].js",
   },
   resolve: {
-    extensions: [".tsx", ".js"],
+    extensions: [".ts", ".tsx", ".js"],
     plugins: [new TsconfigPathsPlugin()],
   },
   optimization: {
@@ -66,8 +86,13 @@ const config: webpack.Configuration = {
         generateStatsFile: true,
       }),
     new ESLintPlugin({
-      extensions: ["tsx"],
+      extensions: ["ts", "tsx"],
     }),
+    !isDev &&
+      new MiniCssExtractPlugin({
+        filename: "[name].css",
+        chunkFilename: "[id].css",
+      }),
   ].filter(Boolean) as webpack.Configuration["plugins"],
   performance: {
     maxAssetSize: 800000,

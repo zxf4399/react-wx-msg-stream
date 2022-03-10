@@ -16,14 +16,11 @@ module.exports = function (api) {
       [
         "@babel/preset-react",
         {
-          importSource: "@emotion/react",
           runtime: "automatic",
         },
       ],
       "@babel/preset-typescript",
     ],
-    plugins: [isDev && "react-refresh/babel", "@emotion/babel-plugin"].filter(
-      Boolean
-    ),
+    plugins: [isDev && "react-refresh/babel"].filter(Boolean),
   };
 };
